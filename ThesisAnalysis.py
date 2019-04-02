@@ -2,7 +2,7 @@
 GOAL: Create a tidy csv file from different, but identically formatted text files procedurally generated
 by a specific application. Originally for an independent research project, posted with permission from researcher.
 
-Written by: Kathy Thompson, 3/31/19
+Written by: Kathy Thompson and Melanie Meredith,  3/31/19
 
 '''
 import os
@@ -12,12 +12,14 @@ import re
 LENGTH_CATEGORIES = 12
 FILE_LENGTH=145
 CATEGORIES = ["cmx", "cml", "csi", "csq", "lin", "sli", "smu", "ssi", "sqm", "sqp", "tri", "tsq"]
-
+#used a regular expression since all files had the same name formatting
+#grouped these for easier parsing later (each file had a subject and a task associated)
+#within groups, we could refer to the type of subject and task to associate with each file
 NAME=re.compile(r'(subject\d|subject\d\d|s\d|s\d\d)+(transfer\d|transfer\d\d|learning\d|learning\d\d)')
 
 
-#wrapping the data inside of a class decreases nesting and allows for easier parsing
-#Called this class RAW_FILE since FILE is a reserved definition
+#wrapping the data inside of a class decreases nesting and allows for easier parsing (KT)
+#Called this class RAW_FILE since FILE is a reserved definition (KT)
 class RAW_FILE:
     def __init__(self):
         self.totalacc = {}
@@ -36,13 +38,14 @@ class RAW_FILE:
         self.d2 = {}
 
         #taking just the values from a line
+    #written by MM
     def parse_line(self, line):
         equals = line.find("=")
         percent = line.find("%")
         value = line[equals+2: percent]
         return value
 
-        
+    #written by KT and MM    
     def parse_section(self, line): 
         #for the first half of the file
         if "All Stimuli" in line:
@@ -71,7 +74,7 @@ class RAW_FILE:
                 value = self.parse_line(line)
                 self.stimulus_count[str(CATEGORIES[i])] = value
         return
-
+    #written by MM
     def parse_category(self, line, f):
         for i in range(LENGTH_CATEGORIES):
             if line == str(CATEGORIES[i]):
@@ -94,7 +97,7 @@ class RAW_FILE:
                 v = self.parse_line(line)
                 self.d2[cat]= v
 #end of class definitions
-
+#written by KT
 def parse_files(): #actual workhorse of the file
     list_files=os.listdir(os.getcwd())
     list_of_files = []
